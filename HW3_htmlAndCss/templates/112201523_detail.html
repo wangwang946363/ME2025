@@ -71,5 +71,52 @@
         </ul>
       </section>
     </div>
+
+    <h2>回饋表單</h2>
+    <form action="112201523_index.html" method="get">
+      <fieldset>
+        <legend>基本資訊</legend>
+        <label for="name">姓名：</label>
+        <input id="name" name="name" type="text" placeholder="請輸入姓名" />
+        <br /><br />
+        性別：
+        <label><input type="radio" name="gender" value="male" /> 男生</label>
+        <label><input type="radio" name="gender" value="female" /> 女生</label>
+      </fieldset>
+  
+      <fieldset>
+        <legend>你是從哪裡知道這個網站？（下拉選單）</legend>
+        <select name="source">
+          <option value="">— 請選擇 —</option>
+          <option value="friend">朋友介紹</option>
+          <option value="class">課堂作業</option>
+          <option value="search">Google</option>
+          <option value="other">其他</option>
+        </select>
+      </fieldset>
+  
+      <fieldset>
+        <legend>你喜歡聽故事嗎?</legend>
+        <label><input type="radio" name="fav_genre" value="pop" /> 喜歡</label>
+        <label><input type="radio" name="fav_genre" value="rock" /> 不喜歡</label>
+      </fieldset>
+  
+      <fieldset>
+        <legend>你平常最常聽到甚麼故事?（可複選，多選）</legend>
+        <label><input type="checkbox" name="instrument" value="vocal" /> 恐怖</label>
+        <label><input type="checkbox" name="instrument" value="guitar" /> 愛情</label>
+        <label><input type="checkbox" name="instrument" value="piano" /> 神話</label>
+        <label><input type="checkbox" name="instrument" value="drum" /> 科幻</label>
+      </fieldset>
+  
+      <fieldset>
+        <legend>備註（輸入框）</legend>
+        <textarea name="comment" placeholder="想說的話..."></textarea>
+      </fieldset>
+  
+      <div class="actions">
+        <button type="submit">送出回到首頁</button>
+      </div>
+    </form>
 </body>
 </html>
