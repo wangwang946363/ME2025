@@ -23,7 +23,7 @@ document.getElementById("guessBtn").addEventListener("click", function()
     }
     else
     {
-        alert('恭喜答對!你總共猜了 ${count} 次。');
+        alert("恭喜答對!你總共猜了" + count + "次。");
         answer = Math.floor(Math.random() * 101);
         count = 0;
     }
