@@ -7,3 +7,9 @@ let buttons =
     '+','-','*','/','(',')',
     'clear','='
 ];
+
+for(let i = 0; i < buttons.length; i++)
+{
+    document.write('<button onclick = "press(\'' + buttons[i] + '\')">' + buttons[i] + '<\button>');
+    if((i+1)%4 === 0) document.write('<br>');
+}
