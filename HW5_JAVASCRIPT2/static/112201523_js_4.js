@@ -24,3 +24,17 @@ function updateRowSubtotal(tr)
     checkbox.disabled = (stock === 0 || qty === 0);
     if (checkbox.disabled) checkbox.checked = false;
 }
+
+function updateTotal()
+{
+    let total = 0;
+    DocumentFragment.querySelectorAll(".item").forEach((tr) => 
+    {
+        const checkbox = tr.querySelector(".check");
+        if (checkbox.checked)
+        {
+            total += toInt(tr.querySelector(".subtotal").textContent);
+        }
+    });
+    totalEl.textContent = total;
+}
