@@ -1,0 +1,106 @@
+:root
+{
+    --border: #ddd;
+}
+
+body
+{
+    font-family: system-ui, -apple-system, "Noto Sans TC", Arial, sans-serif;
+    padding: 24px;
+}
+
+h2 { margin-bottom: 12px;}
+
+.cart
+{
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 960px;
+    background: #fff;
+}
+
+.cart th, .cart td
+{
+    border: 1px solid var(--border);
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.card thead th
+{
+    background: #fafafa;
+}
+
+.card td img
+{
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.price, .subtotal, #total { font-weight: 700; }
+
+.qty-cell 
+{
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+.qty-cell .btn 
+{
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.qty-cell .btn:disabled 
+{
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.qty-cell .qty 
+{
+    width: 64px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.footer 
+{
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 16px;
+}
+
+#checkout 
+{
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+}
+
+.result 
+{
+    margin-top: 18px;
+    border: 1px solid #000;
+    padding: 12px;
+    max-width: 960px;
+    white-space: pre-wrap;
+    background: #f8f8f8;
+}
