@@ -5,5 +5,70 @@
     <title>購物車</title>
     <script src = "../static/112201523_js_4.js" defer></script>
 </head>
+<body>
+    <h2>購物車</h2>
+    <table class = "cart">
+        <thead>
+            <tr>
+                <th><label><input type="checkbox" id="check_all"> 全選</label></th>
+                <th>商品圖片</th>
+                <th>商品名稱</th>
+                <th>庫存</th>
+                <th>單價</th>
+                <th>數量</th>
+                <th>小計</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="item">
+                <td><input type="checkbox" class="check"></td>
+                <td><img src="../static/img/benq.jfif" alt="BENQ 螢幕" /></td>
+                <td class="name">BENQ 螢幕</td>
+                <td class="stock">18</td>
+                <td class="price">6908</td>
+                <td class="qty-cell">
+                    <button class="btn minus">-</button>
+                    <input type="number" class="qty" value="1" min="0" inputmode="numeric">
+                    <button class="btn plus">+</button>
+                </td>
+                <td class="subtotal">6908</td>
+            </tr>
 
+            <tr class="item">
+                <td><input type="checkbox" class="check"></td>
+                <td><img src="../static/img/3M.webp" alt="3M 博視燈" /></td>
+                <td class="name">3M 博視燈</td>
+                <td class="stock">89</td>
+                <td class="price">1799</td>
+                <td class="qty-cell">
+                    <button class="btn minus">-</button>
+                    <input type="number" class="qty" value="1" min="0" inputmode="numeric">
+                    <button class="btn plus">+</button>
+                </td>
+                <td class="subtotal">1799</td>
+            </tr>
+
+            <tr class="item">
+                <td><input type="checkbox" class="check"></td>
+                <td><img src="../static/img/DJI.jfif" alt="DJI Mini 4 Pro" /></td>
+                <td class="name">DJI Mini 4 Pro</td>
+                <td class="stock">23</td>
+                <td class="price">31960</td>
+                <td class="qty-cell">
+                    <button class="btn minus">-</button>
+                    <input type="number" class="qty" value="1" min="0" inputmode="numeric">
+                    <button class="btn plus">+</button>
+                </td>
+                <td class="subtotal">31960</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div>total : <span id="total">0</span></div>
+        <button id="checkout">結帳</button>
+    </div>
+
+    <div id="result" class="result"></div>
+</body>
 </html>
