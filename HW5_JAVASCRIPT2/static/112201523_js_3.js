@@ -3,6 +3,7 @@ let guessCount;
 let startTime;
 let timerInterval;
 let gameOver = false;
+let roundCount = 1;
 
 function startGame()
 {
@@ -12,6 +13,7 @@ function startGame()
     gameOver = false;
     document.getElementById("hint").textContent = "";
     document.getElementById("timer").textContent = "0";
+    document.getElementById("round").textContent = `第 ${roundCount} 輪`;
     clearInterval(timerInterval);
 }
 
@@ -48,9 +50,10 @@ function makeGuess()
         alert(`答對了，共猜了 ${guessCount} 次，耗時 ${elapsed.toFixed(2)} 秒。`);
         //新增紀錄
         let record = document.createElement("p");
-        record.textContent = `猜了 ${guessCount} 次，耗時 ${elapsed.toFixed(2)} 秒，時間 ${new Date().toLocaleTimeString()}`;
+        record.textContent = `第 ${roundCount} 輪：猜了 ${guessCount} 次，耗時 ${elapsed.toFixed(2)} 秒，時間 ${new Date().toLocaleTimeString()}`;
         document.getElementById("records").appendChild(record);
         //下一輪
+        roundCount++;
         setTimeout(startGame, 500);
     }
     else if (guess < answer)
