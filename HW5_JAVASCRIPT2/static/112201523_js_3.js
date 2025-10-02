@@ -62,3 +62,6 @@ function makeGuess()
         document.getElementById("hint").textContent = "太大了再試一次。";
     }
 }
+
+//初始化
+window.onload = startGame;
