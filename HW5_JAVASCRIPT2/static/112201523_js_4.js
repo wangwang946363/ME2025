@@ -38,3 +38,10 @@ function updateTotal()
     });
     totalEl.textContent = total;
 }
+
+function syncCheckAll()
+{
+    const rows = [...document.querySelectorAll(".item")];
+    const allChecked = rows.length > 0 && rows.every(tr => tr.querySelector(".check").checked);
+    checkAll.checked = allChecked;
+}
