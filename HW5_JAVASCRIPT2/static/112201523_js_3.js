@@ -14,3 +14,13 @@ function startGame()
     document.getElementById("timer").textContent = "0";
     clearInterval(timerInterval);
 }
+
+function startTimer()
+{
+    startTime = new Date();
+    timerInterval = setInterval(() => 
+        {
+            let elapsed = ((new Date()) - startTime) / 1000;
+            document.getElementById("timer").textContent = elapsed.toFixed(2);
+        }, 100);
+}
