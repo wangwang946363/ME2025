@@ -118,4 +118,50 @@ table.addEventListener("blur", (e) =>
     syncCheckAll( );
 }, true);
 
+checkoutBtn.addEventListener("click", () => 
+{
+    const total = toInt(totalEl.textContent);
+    if (total <= 0)
+    {
+        return;
+    }
 
+    //明細
+    let lines = [];
+    document.querySelectorAll(".item").forEach((tr) => 
+    {
+        const checkbox = tr.querySelector("check");
+        if (!checkbox.checked) return;
+
+        const name = tr.querySelector(".name").textContent;
+        const price = toInt(tr.querySelector(".price").textContent);
+        const qtyInput = tr.querySelector(".qty");
+        const qty = toInt(qtyInput.value);
+        const subtotal = price * qty;
+
+        lines.push(`${name} × ${qty} = ${subtotal}`);
+
+        //庫存扣除
+        const stockEl = tr.querySelector(".stock");
+        let stock = toInt(stockEl.textContent);
+        stock = Math.max(0, stock - qty);
+        stockEl.textContent = stock;
+
+        checkbox.checked = false;
+
+        if (stock === 0)
+        {
+            qtyInput.value = 0;
+        }
+        else
+        {
+            qtyInput.value = 1;
+        }
+
+        updateRowSubtotal(tr);
+    });
+
+    result.innerHTML = `這個網頁顯示\n\n${lines.join("\n")}\n\n總計: ${total}`;
+    updateTotal();
+    syncCheckAll( );
+});
