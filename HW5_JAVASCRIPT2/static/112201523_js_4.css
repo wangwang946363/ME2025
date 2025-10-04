@@ -27,12 +27,12 @@ h2 { margin-bottom: 12px;}
     vertical-align: middle;
 }
 
-.card thead th
+.cart thead th
 {
     background: #fafafa;
 }
 
-.card td img
+.cart td img
 {
     width: 72px;
     height: 72px;

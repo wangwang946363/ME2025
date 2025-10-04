@@ -1,7 +1,7 @@
 const table =  document.querySelector(".cart");
 const checkAll = document.getElementById("check_all");
 const totalEl = document.getElementById("total");
-const checkoutBtn = document.getElementById("ckeckout");
+const checkoutBtn = document.getElementById("checkout");
 const result = document.getElementById("result");
 
 const toInt = (v) => parseInt(v, 10) || 0;
@@ -28,7 +28,7 @@ function updateRowSubtotal(tr)
 function updateTotal()
 {
     let total = 0;
-    DocumentFragment.querySelectorAll(".item").forEach((tr) => 
+    document.querySelectorAll(".item").forEach((tr) => 
     {
         const checkbox = tr.querySelector(".check");
         if (checkbox.checked)
@@ -47,8 +47,8 @@ function syncCheckAll()
 }
 
 document.querySelectorAll(".item").forEach(updateRowSubtotal);
-updateRowSubtotal();
-syncCheckAll( );
+updateTotal();
+syncCheckAll();
 
 checkAll.addEventListener("change", () =>
 {
@@ -130,7 +130,7 @@ checkoutBtn.addEventListener("click", () =>
     let lines = [];
     document.querySelectorAll(".item").forEach((tr) => 
     {
-        const checkbox = tr.querySelector("check");
+        const checkbox = tr.querySelector(".check");
         if (!checkbox.checked) return;
 
         const name = tr.querySelector(".name").textContent;
