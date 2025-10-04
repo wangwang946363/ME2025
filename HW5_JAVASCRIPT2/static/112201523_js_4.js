@@ -97,4 +97,25 @@ table.addEventListener("click", (e) =>
         updateTotal();
         syncCheckAll( );
     }
-})
+});
+
+table.addEventListener("blur", (e) => 
+{
+    if (!e.target.classList.contains("qty")) return;
+    const tr = e.target.closest(".item");
+    let qty = toInt(e.target.value);
+    const stock = toInt(tr.querySelector(".stock").textContent);
+
+    if(isNaN(qty) || qty < 1) qty = 1;
+    if(qty > stock) qty = stock;
+
+    if (stock === 0) qty = 0;
+
+    e.target.value = qty;
+
+    updateRowSubtotal(tr);
+    updateTotal();
+    syncCheckAll( );
+}, true);
+
+
