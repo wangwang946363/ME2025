@@ -51,12 +51,50 @@ updateRowSubtotal();
 syncCheckAll( );
 
 checkAll.addEventListener("change", () =>
+{
+    document.querySelectorAll(".item").forEach((tr) => 
     {
-        document.querySelectorAll(".item").forEach((tr) => 
-        {
-            const checkbox = tr.querySelector(".check");
-            if (!checkbox.disabled) checkbox.checked = checkAll.checked;
-            updateRowSubtotal(tr);
-        });
-        updateTotal();
+        const checkbox = tr.querySelector(".check");
+        if (!checkbox.disabled) checkbox.checked = checkAll.checked;
+        updateRowSubtotal(tr);
     });
+    updateTotal();
+});
+
+table.addEventListener("click", (e) => 
+{
+    const target = e.target;
+    const tr = target.closest(".item");
+    if (!tr) return;
+
+    //勾選單列checkbox
+    if (target.classList.contains("check"))
+    {
+        updateTotal();
+        syncCheckAll( );
+        return;
+    }
+
+    //加減按鈕
+    if (target.classList.contains("plus") || target.classList.contains("minus"))
+    {
+        const qtyInput = tr.querySelector(".qty");
+        const stock = toInt(tr.querySelector(".stock").textContent);
+        let qty = toInt(qtyInput.value);
+
+        if (target.classList.contains("plus"))
+        {
+            if (qty < stock) qty += 1; //不超過庫存
+        }
+        else
+        {
+            if (qty > 1) qty -= 1;
+            if (stock === 0) qty = 0;
+        }
+        qtyInput.value = qty;
+
+        updateRowSubtotal(tr);
+        updateTotal();
+        syncCheckAll( );
+    }
+})
