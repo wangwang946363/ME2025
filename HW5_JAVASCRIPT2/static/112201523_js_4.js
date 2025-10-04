@@ -45,3 +45,8 @@ function syncCheckAll()
     const allChecked = rows.length > 0 && rows.every(tr => tr.querySelector(".check").checked);
     checkAll.checked = allChecked;
 }
+
+document.querySelectorAll(".item").forEach(updateRowSubtotal);
+updateRowSubtotal();
+syncCheckAll( );
+
