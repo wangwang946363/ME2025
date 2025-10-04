@@ -161,7 +161,7 @@ checkoutBtn.addEventListener("click", () =>
         updateRowSubtotal(tr);
     });
 
-    alert(`這個網頁顯示\n\n${lines.join("\n")}\n\n總計: ${total}`);
+    alert(`謝謝您的購買，歡迎再次光臨。\n以下是您本次的購買明細:\n\n${lines.join("\n")}\n\n總計: ${total}`);
     updateTotal();
     syncCheckAll( );
 });
