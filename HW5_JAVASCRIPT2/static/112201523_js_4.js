@@ -161,7 +161,7 @@ checkoutBtn.addEventListener("click", () =>
         updateRowSubtotal(tr);
     });
 
-    result.innerHTML = `這個網頁顯示\n\n${lines.join("\n")}\n\n總計: ${total}`;
+    alert(`這個網頁顯示\n\n${lines.join("\n")}\n\n總計: ${total}`);
     updateTotal();
     syncCheckAll( );
 });
