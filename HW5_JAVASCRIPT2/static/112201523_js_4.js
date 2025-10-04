@@ -50,3 +50,13 @@ document.querySelectorAll(".item").forEach(updateRowSubtotal);
 updateRowSubtotal();
 syncCheckAll( );
 
+checkAll.addEventListener("change", () =>
+    {
+        document.querySelectorAll(".item").forEach((tr) => 
+        {
+            const checkbox = tr.querySelector(".check");
+            if (!checkbox.disabled) checkbox.checked = checkAll.checked;
+            updateRowSubtotal(tr);
+        });
+        updateTotal();
+    });
