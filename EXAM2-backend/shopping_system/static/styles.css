@@ -1,0 +1,49 @@
+body{
+  display: flex;
+  gap: 1em;
+  font-family: Arial, sans-serif;
+}
+/* TODO:[CSS-WritingPart A Start]--------------------- */
+#filter{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid black;
+  border-radius: 5px;
+  width:150px;
+  height:300px;
+  padding:10px;
+
+  
+}
+/* TODO:[CSS-WritingPart A End]--------------------- */
+#filter h3{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#products{
+  width: 100%;
+}
+#products table{
+  width: 100%;
+  border-collapse: collapse;
+}
+#products table tr th, #products table tr td{
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  width: 10%;
+}
+#products table tr th{
+  background-color: #f4f4f4;
+}
+img{
+  max-width: 100px;
+  max-height: 100px;
+}
+/* TODO:[CSS-WritingPart B Start]--------------------- */
+#products table tbody tr:hover td{
+  background: #fcefdf;
+}
+
+/* TODO:[CSS-WritingPart B Start]--------------------- */

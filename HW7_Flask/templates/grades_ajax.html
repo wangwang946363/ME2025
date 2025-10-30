@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>Grades (AJAX)</title>
+</head>
+<body>
+  <h1>Grades (AJAX)</h1>
+  <p>Welcome, {{ teacher }}!</p>
+  <p>
+    <a href="{{ url_for('grades_form') }}">表單版</a> |
+    <a href="{{ url_for('grades_ajax') }}">AJAX版</a> |
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </p>
+
+  <h2>成績清單</h2>
+  <table border="1" cellpadding="4" cellspacing="0">
+    <thead><tr><th>姓名</th><th>學號</th><th>成績</th><th>操作</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <h2>新增 / 更新</h2>
+  <p>姓名 <input id="name"></p>
+  <p>學號 <input id="sid"></p>
+  <p>成績 <input id="score" type="number" step="1"></p>
+  <p><button id="btnAdd">提交</button></p>
+
+  <script src="{{ url_for('static', filename='grades.js') }}"></script>
+</body>
+</html>
