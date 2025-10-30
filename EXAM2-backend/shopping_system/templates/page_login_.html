@@ -3,29 +3,18 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登入系統</title>
-    <link rel="stylesheet" href="../static/styles.css">
+    <title>使用者登入</title>
+    <script src="../static/script.js"></script>
   </head>
-
   <body>
     <h2>使用者登入</h2>
-
-    <!-- ✅ 修正 form 範圍 -->
-    <form action="/page_login" method="POST">
+    <form onsubmit="handleLogin(event)">
       <label for="username">帳號:</label>
-      <input type="text" id="username" name="username" required>
-      <br>
+      <input type="text" id="username" name="username" required><br>
       <label for="password">密碼:</label>
-      <input type="password" id="password" name="password" required>
-      <br><br>
+      <input type="password" id="password" name="password" required><br><br>
       <input type="submit" value="登入">
     </form>
-
-    <div>
-      <p>沒有帳號? <a href="/register">註冊</a></p>
-    </div>
-
-    <!-- ✅ script 放在頁尾，路徑修正 -->
-    <script src="../static/script.js"></script>
+    <p>沒有帳號？<a href="/page_register">註冊</a></p>
   </body>
 </html>

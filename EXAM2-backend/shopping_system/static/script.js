@@ -1,83 +1,54 @@
-// ===================== 產品資料（保留原資料；渲染時自動修正圖片路徑） =====================
+/***** 商品資料（保留即可） *****/
 const products = [
-  { name: 'T-Shirt',        price: 25, gender: '男裝', category: '上衣',    image_url: '.../static/img/T-Shirt.png' },
-  { name: 'Blouse',         price: 30, gender: '女裝', category: '上衣',    image_url: '.../static/img/Blouse.png' },
-  { name: 'Jeans',          price: 50, gender: '通用', category: '褲/裙子', image_url: '.../static/img/Jeans.png' },
-  { name: 'Skirt',          price: 40, gender: '女裝', category: '褲/裙子', image_url: '.../static/img/Skirt.png' },
-  { name: 'Sneakers',       price: 60, gender: '通用', category: '鞋子',    image_url: '.../static/img/Sneakers.png' },
-  { name: 'Leather Shoes',  price: 80, gender: '男裝', category: '鞋子',    image_url: '.../static//img/LeatherShoes.png' },
-  { name: 'Baseball Cap',   price: 20, gender: '通用', category: '帽子',    image_url: '.../static/img/BaseballCap.png' },
-  { name: 'Sun Hat',        price: 25, gender: '女裝', category: '帽子',    image_url: '.../static/img/SunHat.png' },
-  { name: 'Running Shoes',  price: 85, gender: '通用', category: '鞋子',    image_url: '.../static/img/RunningShoes.png' },
-  { name: 'Dress',          price: 75, gender: '女裝', category: '上衣',    image_url: '.../static/img/Dress.png' }
+  {name:'T-Shirt',       price:25, gender:'男裝', category:'上衣',   image_url:'../static/img/T-Shirt.png'},
+  {name:'Blouse',        price:30, gender:'女裝', category:'上衣',   image_url:'../static/img/Blouse.png'},
+  {name:'Jeans',         price:50, gender:'通用', category:'褲/裙子', image_url:'../static/img/Jeans.png'},
+  {name:'Skirt',         price:40, gender:'女裝', category:'褲/裙子', image_url:'../static/img/Skirt.png'},
+  {name:'Sneakers',      price:60, gender:'通用', category:'鞋子',   image_url:'../static/img/Sneakers.png'},
+  {name:'Leather Shoes', price:80, gender:'男裝', category:'鞋子',   image_url:'../static/img/LeatherShoes.png'},
+  {name:'Baseball Cap',  price:20, gender:'通用', category:'帽子',   image_url:'../static/img/BaseballCap.png'},
+  {name:'Sun Hat',       price:25, gender:'女裝', category:'帽子',   image_url:'../static/img/SunHat.png'},
+  {name:'Running Shoes', price:85, gender:'通用', category:'鞋子',   image_url:'../static/img/RunningShoes.png'},
+  {name:'Dress',         price:75, gender:'女裝', category:'上衣',   image_url:'../static/img/Dress.png'}
 ];
 
-// ===================== 導覽列顯示登入者 =====================
+/* ========= 需求 #1：左上角顯示目前登入者，點「登出」回登入 ========= */
 (function showUsername() {
-  // 優先取後端模板塞在 body 的 data-username，其次 localStorage，最後 Guest
-  const fromBody = document.body?.dataset?.username;
-  const username = (fromBody && fromBody.trim()) || localStorage.getItem('username') || 'Guest';
-  const holder = document.querySelector('.quixnav-scroll div') || document.querySelector('.quixnav div');
-  if (holder) holder.innerHTML = `👤 使用者：${username}　<a href="/logout" id="logout-link">登出</a>`;
+  const username = localStorage.getItem('username') || 'Guest';
+  const holder = document.querySelector('.quixnav-scroll div');
+  if (holder) holder.textContent = `👤 使用者：${username}`;
 })();
 
-// ===================== 下單按鈕（固定在左下） =====================
-(function ensureOrderButton() {
+/* ======== 公用狀態（保存每列是否勾選與數量） ======== */
+const rowState = new Map();
+
+/* 小工具：金額格式化 */
+const money = (n) => Number(n || 0).toLocaleString();
+
+/* ========= 需求 #2：未勾選任何品項時，數量為 0；「-」「+」皆不可按 =========
+   ========= 需求 #3：勾選時數量 0→1，且「-」禁用；取消勾選數量回 0 =========
+   ========= 需求 #4：未勾選任何品項，下單鍵禁用 =========
+   ========= 需求 #5：任一選擇/增減，總金額與按鈕旁摘要即時更新 ========= */
+
+/* 建立右下角「下單」區塊（按鈕+摘要） */
+(function ensureOrderBar() {
   if (document.getElementById('place-order')) return;
   const wrap = document.createElement('div');
-  wrap.style.position = 'fixed';
-  wrap.style.left = '12px';
-  wrap.style.bottom = '12px';
-  wrap.style.background = '#fff';
-  wrap.style.border = '1px solid #e5e7eb';
-  wrap.style.borderRadius = '8px';
-  wrap.style.padding = '10px 12px';
-  wrap.style.boxShadow = '0 6px 18px rgba(0,0,0,.06)';
-  wrap.style.zIndex = '20';
-
+  wrap.style.cssText = 'position:fixed;left:12px;bottom:12px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;box-shadow:0 6px 18px rgba(0,0,0,.06);z-index:20;display:flex;gap:12px;align-items:center';
   const btn = document.createElement('button');
   btn.id = 'place-order';
   btn.textContent = '下單';
   btn.disabled = true;
-  btn.style.background = '#2563eb';
-  btn.style.color = '#fff';
-  btn.style.border = 'none';
-  btn.style.padding = '8px 14px';
-  btn.style.borderRadius = '6px';
-  btn.style.cursor = 'pointer';
-
+  btn.style.cssText = 'background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer';
   const span = document.createElement('span');
   span.id = 'cart-summary';
-  span.style.marginLeft = '12px';
   span.style.color = '#475569';
-
-  wrap.appendChild(btn);
-  wrap.appendChild(span);
+  span.textContent = '已選 0 項、總數量 0、總金額 $0';
+  wrap.appendChild(btn); wrap.appendChild(span);
   document.body.appendChild(wrap);
 })();
 
-// ===================== 工具 & 狀態 =====================
-const rowState = new Map(); // key → {checked, qty}
-
-// 修正圖片路徑：把 '.../static'、多餘斜線統一成 '../static'
-function normalizeImg(url = '') {
-  return url
-    .replace(/^\.{3,}\//, '../')   // .../ 或 ....// → ../
-    .replace('.../static', '../static')
-    .replace(/\/{2,}/g, '/');
-}
-
-function setRowEnabled(tr, enabled) {
-  const dec = tr.querySelector('.btn-dec');
-  const inc = tr.querySelector('.btn-inc');
-  const input = tr.querySelector('.qty-input');
-  input.disabled = !enabled;
-  inc.disabled = !enabled;
-  const qty = Number(input.value || 0);
-  dec.disabled = !enabled || qty <= 0;
-}
-
-// ===================== 渲染表格（符合題目 1/2 條件） =====================
+/* 渲染商品表格 */
 function display_products(list) {
   const tbody = document.querySelector('#products table tbody');
   if (!tbody) return;
@@ -85,187 +56,180 @@ function display_products(list) {
 
   list.forEach((p, i) => {
     const key = `${p.name}-${i}`;
-    if (!rowState.has(key)) rowState.set(key, { checked: false, qty: 0 });
-    const st = rowState.get(key);
-    const price = Number(p.price) || 0;
-    const total = price * (st.qty || 0);
+    if (!rowState.has(key)) rowState.set(key, { checked:false, qty:0, price:p.price });
 
-    const html = `
-      <tr data-key="${key}">
-        <td><input type="checkbox" class="row-check" ${st.checked ? 'checked' : ''}></td>
-        <td><img src="${normalizeImg(p.image_url)}" alt="${p.name}" style="width:56px;height:56px;object-fit:cover;border:1px solid #e5e7eb;border-radius:6px;"></td>
-        <td>${p.name}</td>
-        <td data-price="${price}">${price.toLocaleString()}</td>
-        <td>${p.gender}</td>
-        <td>${p.category}</td>
-        <td>
-          <div class="qty" style="display:inline-flex;align-items:center;gap:6px;">
-            <button type="button" class="btn-dec" style="padding:2px 8px;" ${(!st.checked || (st.qty||0)<=0) ? 'disabled' : ''}>-</button>
-            <input type="number" class="qty-input" min="0" value="${st.qty}" style="width:64px;" ${st.checked ? '' : 'disabled'}>
-            <button type="button" class="btn-inc" style="padding:2px 8px;" ${st.checked ? '' : 'disabled'}>+</button>
-          </div>
-        </td>
-        <td class="row-total">${total.toLocaleString()}</td>
-      </tr>`;
-    tbody.insertAdjacentHTML('beforeend', html);
-    setRowEnabled(tbody.lastElementChild, st.checked);
+    const st = rowState.get(key);
+    const tr = document.createElement('tr');
+    tr.dataset.key = key;
+    tr.innerHTML = `
+      <td><input type="checkbox" class="row-check" ${st.checked ? 'checked':''}></td>
+      <td><img src="${p.image_url}" alt="${p.name}" style="width:56px;height:56px;object-fit:cover;border:1px solid #e5e7eb;border-radius:6px;"></td>
+      <td>${p.name}</td>
+      <td data-price="${p.price}">${money(p.price)}</td>
+      <td>
+        <div style="display:inline-flex;align-items:center;gap:6px">
+          <button type="button" class="btn-dec">-</button>
+          <input type="number" class="qty-input" min="0" value="${st.qty}" style="width:64px">
+          <button type="button" class="btn-inc">+</button>
+        </div>
+      </td>
+      <td class="row-total">${money(p.price * st.qty)}</td>
+    `;
+    tbody.appendChild(tr);
+    // 初始狀態：若未勾選，數量=0，±都禁用；若已勾選，數量至少 1、- 禁用
+    applyRowEnable(tr, st.checked, st.qty);
   });
 
   refreshSummary();
 }
 
-// ===================== 篩選 =====================
-function apply_filter(list) {
-  const max_price = document.getElementById('max_price')?.value ?? '';
-  const min_price = document.getElementById('min_price')?.value ?? '';
-  const gender = document.getElementById('gender')?.value ?? 'All';
-
-  const category_shirts = document.getElementById('shirts')?.checked ?? false;
-  const category_pants  = document.getElementById('pants')?.checked ?? false;
-  const category_shoes  = document.getElementById('shoes')?.checked ?? false;
-  const category_cap    = document.getElementById('cap')?.checked ?? false;
-
-  const selectedCats = [];
-  if (category_shirts) selectedCats.push('上衣');
-  if (category_pants)  selectedCats.push('褲/裙子');
-  if (category_shoes)  selectedCats.push('鞋子');
-  if (category_cap)    selectedCats.push('帽子');
-
-  const result = list.filter(p => {
-    const price = Number(p.price);
-    const inMin = (min_price === '' || price >= Number(min_price));
-    const inMax = (max_price === '' || price <= Number(max_price));
-    const fitPrice = inMin && inMax;
-
-    let fitGender = true;
-    if (gender === 'Male')   fitGender = (p.gender === '男裝' || p.gender === '通用');
-    if (gender === 'Female') fitGender = (p.gender === '女裝' || p.gender === '通用');
-
-    const fitCat = (selectedCats.length === 0) || selectedCats.includes(p.category);
-    return fitPrice && fitGender && fitCat;
-  });
-
-  display_products(result);
+/* 啟用/停用一列的控制器 */
+function applyRowEnable(tr, checked, qty) {
+  const btnDec = tr.querySelector('.btn-dec');
+  const btnInc = tr.querySelector('.btn-inc');
+  const input  = tr.querySelector('.qty-input');
+  if (!checked) {
+    input.value = 0;
+    input.disabled = true;
+    btnInc.disabled = true;
+    btnDec.disabled = true;
+  } else {
+    // 勾選 → 若 qty<1，強制成 1 並禁用「-」
+    const v = Math.max(1, Number(qty || 0));
+    input.value = v;
+    input.disabled = false;
+    btnInc.disabled = false;
+    btnDec.disabled = v <= 1;
+  }
+  updateRowTotal(tr);
 }
 
-// ===================== 事件（符合題目 2/3/4/5 行為） =====================
+/* 更新單列小計 */
+function updateRowTotal(tr) {
+  const price = Number(tr.querySelector('[data-price]').dataset.price || 0);
+  const qty   = Number(tr.querySelector('.qty-input').value || 0);
+  tr.querySelector('.row-total').textContent = money(price * qty);
+}
+
+/* 表格事件委派：checkbox、±、輸入數量 */
 (function bindTableEvents() {
   const tbody = document.querySelector('#products table tbody');
   if (!tbody) return;
 
-  tbody.addEventListener('click', (e) => {
-    const tr = e.target.closest('tr');
-    if (!tr) return;
-    const key = tr.dataset.key;
-    const st = rowState.get(key) || { checked: false, qty: 0 };
+  tbody.addEventListener('click', e => {
+    const tr  = e.target.closest('tr'); if (!tr) return;
+    const key = tr.dataset.key;         if (!key) return;
+    const st  = rowState.get(key);
 
-    // 勾選：數量 0→1；取消：數量歸 0（題目 3）
+    // 勾選/取消
     if (e.target.classList.contains('row-check')) {
-      const input = tr.querySelector('.qty-input');
-      if (e.target.checked) { st.checked = true; st.qty = 1; input.value = 1; }
-      else { st.checked = false; st.qty = 0; input.value = 0; }
+      st.checked = e.target.checked;
+      // 勾選→數量至少 1；取消→數量 0
+      st.qty = st.checked ? Math.max(1, Number(st.qty||0)) : 0;
       rowState.set(key, st);
-      updateRowTotal(tr);
-      setRowEnabled(tr, st.checked);
+      applyRowEnable(tr, st.checked, st.qty);
       refreshSummary();
       return;
     }
 
+    // 減少
     if (e.target.classList.contains('btn-dec')) {
-      const input = tr.querySelector('.qty-input');
-      const v = Math.max(0, Number(input.value || 0) - 1);
-      input.value = v; st.qty = v;
-      const chk = tr.querySelector('.row-check');
-      if (!chk.checked && v > 0) { chk.checked = true; st.checked = true; }
-      if (v === 0) { /* 題目 3：- 反白 */ }
-      rowState.set(key, st);
-      updateRowTotal(tr);
-      setRowEnabled(tr, st.checked);
+      if (!st.checked) return;
+      st.qty = Math.max(1, Number(st.qty||1) - 1);
+      tr.querySelector('.qty-input').value = st.qty;
+      // 當 qty==1 時「-」禁用
+      applyRowEnable(tr, true, st.qty);
       refreshSummary();
       return;
     }
 
+    // 增加
     if (e.target.classList.contains('btn-inc')) {
-      const input = tr.querySelector('.qty-input');
-      const v = Math.max(0, Number(input.value || 0) + 1);
-      input.value = v; st.qty = v;
-      const chk = tr.querySelector('.row-check');
-      if (!chk.checked && v > 0) { chk.checked = true; st.checked = true; }
-      rowState.set(key, st);
-      updateRowTotal(tr);
-      setRowEnabled(tr, st.checked);
+      if (!st.checked) return;
+      st.qty = Number(st.qty||1) + 1;
+      tr.querySelector('.qty-input').value = st.qty;
+      applyRowEnable(tr, true, st.qty);
       refreshSummary();
       return;
     }
   });
 
-  tbody.addEventListener('input', (e) => {
+  tbody.addEventListener('input', e => {
     if (!e.target.classList.contains('qty-input')) return;
-    const tr = e.target.closest('tr');
+    const tr  = e.target.closest('tr');
     const key = tr.dataset.key;
-    const st = rowState.get(key) || { checked: false, qty: 0 };
-
-    const v = Math.max(0, Number(e.target.value || 0));
-    e.target.value = v; st.qty = v;
-
-    const chk = tr.querySelector('.row-check');
-    if (!chk.checked && v > 0) { chk.checked = true; st.checked = true; }
-    rowState.set(key, st);
-    updateRowTotal(tr);
-    setRowEnabled(tr, st.checked);
+    const st  = rowState.get(key);
+    if (!st.checked) return; // 未勾選不處理
+    st.qty = Math.max(1, Number(e.target.value || 1));
+    e.target.value = st.qty;
+    applyRowEnable(tr, true, st.qty);
     refreshSummary();
   });
 })();
 
-function updateRowTotal(tr) {
-  const price = Number(tr.querySelector('[data-price]')?.dataset?.price || 0);
-  const qty = Number(tr.querySelector('.qty-input')?.value || 0);
-  const cell = tr.querySelector('.row-total');
-  if (cell) cell.textContent = (price * qty).toLocaleString();
-}
-
-// ===================== 合計/下單（題目 4/5 & 寫入 DB） =====================
+/* 計算摘要 + 控制下單按鈕 */
 function refreshSummary() {
   const tbody = document.querySelector('#products table tbody');
-  if (!tbody) return;
-
-  let selectedCount = 0, totalQty = 0, totalPrice = 0;
+  let selected = 0, totalQty = 0, totalPrice = 0;
 
   tbody.querySelectorAll('tr').forEach(tr => {
-    const chk = tr.querySelector('.row-check');
-    const qty = Number(tr.querySelector('.qty-input')?.value || 0);
-    const price = Number(tr.querySelector('[data-price]')?.dataset?.price || 0);
-    if (chk?.checked && qty > 0) {
-      selectedCount += 1;
+    const chk  = tr.querySelector('.row-check').checked;
+    const qty  = Number(tr.querySelector('.qty-input').value || 0);
+    const price= Number(tr.querySelector('[data-price]').dataset.price || 0);
+    if (chk && qty > 0) {
+      selected += 1;
       totalQty += qty;
       totalPrice += qty * price;
     }
   });
 
   const btn = document.getElementById('place-order');
-  if (btn) btn.disabled = !(selectedCount > 0 && totalQty > 0); // 題目 4
-
-  const s = document.getElementById('cart-summary');
-  if (s) s.textContent = `已選 ${selectedCount} 項、總數量 ${totalQty}、總金額 $${totalPrice.toLocaleString()}`; // 題目 5
+  const sum = document.getElementById('cart-summary');
+  if (btn) btn.disabled = !(selected > 0 && totalQty > 0);
+  if (sum) sum.textContent = `已選 ${selected} 項、總數量 ${totalQty}、總金額 $${money(totalPrice)}`;
 }
 
-// 下單：送到後端 /place_order，後端會回題目規定格式的訊息
-(function bindOrderButton() {
+/* 篩選（index.html 的「篩選」按鈕 onClick 會呼叫） */
+function apply_filter(list) {
+  const maxP = Number(document.getElementById('max_price')?.value || NaN);
+  const minP = Number(document.getElementById('min_price')?.value || NaN);
+  const gSel = document.getElementById('gender')?.value || 'All';
+  const c1 = document.getElementById('shirts')?.checked;
+  const c2 = document.getElementById('pants')?.checked;
+  const c3 = document.getElementById('shoes')?.checked;
+  const c4 = document.getElementById('cap')?.checked;
+
+  const cats = [];
+  if (c1) cats.push('上衣');
+  if (c2) cats.push('褲/裙子');
+  if (c3) cats.push('鞋子');
+  if (c4) cats.push('帽子');
+
+  const result = list.filter(p => {
+    const priceOK = (isNaN(minP) || p.price >= minP) && (isNaN(maxP) || p.price <= maxP);
+    const genderOK = (gSel === 'All') ||
+      (gSel === 'Male' && (p.gender === '男裝' || p.gender === '通用')) ||
+      (gSel === 'Female' && (p.gender === '女裝' || p.gender === '通用'));
+    const catOK = !cats.length || cats.includes(p.category);
+    return priceOK && genderOK && catOK;
+  });
+
+  display_products(result);
+}
+
+/* 綁定下單按鈕，送到 /place_order */
+(function bindOrder() {
   const btn = document.getElementById('place-order');
   if (!btn) return;
   btn.addEventListener('click', async () => {
     const tbody = document.querySelector('#products table tbody');
-    if (!tbody) return;
-
     const items = [];
     tbody.querySelectorAll('tr').forEach(tr => {
-      const chk = tr.querySelector('.row-check');
-      if (!chk?.checked) return;
-      const qty = Number(tr.querySelector('.qty-input')?.value || 0);
-      if (qty <= 0) return;
-      const name = tr.children[2]?.textContent?.trim() || '';
-      const price = Number(tr.querySelector('[data-price]')?.dataset?.price || 0);
-      items.push({ name, price, qty });
+      if (!tr.querySelector('.row-check').checked) return;
+      const name  = tr.children[2].textContent.trim();
+      const price = Number(tr.querySelector('[data-price]').dataset.price || 0);
+      const qty   = Number(tr.querySelector('.qty-input').value || 0);
+      if (qty > 0) items.push({ name, price, qty });
     });
     if (!items.length) return;
 
@@ -275,17 +239,15 @@ function refreshSummary() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items })
       });
-      const data = await res.json();
-      if (data?.status === 'success') {
-        alert(data.message); // 顯示「YYYY/MM/DD HH:MM，已成功下單：... 此單花費總金額: XXX NT」
-      } else {
-        alert(data?.message || '下單失敗');
-      }
-    } catch (err) {
-      alert('下單失敗，請稍後重試');
+      const r = await res.json();
+      alert(r.message || '下單完成');
+    } catch {
+      alert('下單失敗，請稍後再試');
     }
   });
 })();
 
-// ===================== 首次渲染 =====================
-display_products(products);
+/* 首次渲染 */
+document.addEventListener('DOMContentLoaded', () => {
+  display_products(products);
+});
