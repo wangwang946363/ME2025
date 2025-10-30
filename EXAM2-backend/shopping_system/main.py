@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, session, redirect
 from datetime import datetime
 import sqlite3, os, re
 
@@ -46,9 +46,13 @@ def index():
 @app.route('/page_login', methods=['GET', 'POST'])
 def page_login():
     if request.method == 'POST':
+        # 同時支援 JSON 和 FORM
         data = request.get_json(silent=True) or request.form
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
+
+        if not username or not password:
+            return jsonify({"status": "error", "message": "帳號或密碼不得為空"}), 400
 
         conn = get_db_connection()
         cur = conn.cursor()
@@ -58,7 +62,7 @@ def page_login():
 
         if user:
             session['username'] = username
-            return jsonify({"status": "success", "message": "登入成功", "redirect": "/shopping"})
+            return jsonify({"status": "success", "message": "登入成功"})
         else:
             return jsonify({"status": "error", "message": "帳號或密碼錯誤"})
     return render_template('page_login.html')
@@ -75,32 +79,21 @@ def page_register():
         password = data.get('password', '').strip()
         email = data.get('email', '').strip()
 
-        # --- 密碼規則 ---
         if len(password) < 8 or not re.search(r'[a-z]', password) or not re.search(r'[A-Z]', password):
-            return jsonify({"status": "error", "message": "密碼需超過8字且包含英文大小寫"})
-
-        # --- Email 規則 ---
+            return jsonify({"status": "error", "message": "密碼需至少8字且含大小寫"})
         if not re.match(r'^[A-Za-z0-9._%+-]+@gmail\.com$', email):
-            return jsonify({"status": "error", "message": "Email 格式錯誤，請使用 xxx@gmail.com"})
+            return jsonify({"status": "error", "message": "Email 格式錯誤"})
 
-        # --- 資料庫檢查 ---
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM user_table WHERE username=?", (username,))
-        user = cur.fetchone()
+        cur.execute("SELECT 1 FROM user_table WHERE username=?", (username,))
+        if cur.fetchone():
+            return jsonify({"status": "error", "message": "帳號已存在"})
 
-        if user:
-            # 帳號存在 → 更新密碼與信箱
-            cur.execute("UPDATE user_table SET password=?, email=? WHERE username=?", (password, email, username))
-            conn.commit()
-            conn.close()
-            return jsonify({"status": "update", "message": "帳號已存在，成功修改密碼與信箱"})
-        else:
-            # 新註冊
-            cur.execute("INSERT INTO user_table VALUES (?,?,?)", (username, password, email))
-            conn.commit()
-            conn.close()
-            return jsonify({"status": "success", "message": "註冊成功", "redirect": "/page_login"})
+        cur.execute("INSERT INTO user_table VALUES (?,?,?)", (username, password, email))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": "註冊成功"})
     return render_template('page_register.html')
 
 
@@ -118,10 +111,7 @@ def logout():
 # -----------------------------
 @app.route('/shopping')
 def shopping():
-    username = session.get('username')
-    if not username:
-        return redirect('/page_login')
-    return render_template('index.html', username=username)
+    return render_template('index.html', username=session.get('username', 'Guest'))
 
 
 # -----------------------------
@@ -145,16 +135,11 @@ def place_order():
         cur.execute("INSERT INTO order_table VALUES (?,?,?,?,?)", (name, price, qty, subtotal, now))
     conn.commit()
     conn.close()
-
-    msg = f"{now}，已成功下單：\n"
-    for it in items:
-        msg += f"{it['name']}: {it['price']} NT/件 x {it['qty']} 共 {int(it['price']) * int(it['qty'])} NT\n"
-    msg += f"\n此單花費總金額: {total_sum} NT"
-    return jsonify({"status": "success", "message": msg})
+    return jsonify({"status": "success", "message": f"下單成功，共 {total_sum} 元"})
 
 
 # -----------------------------
 # 啟動
 # -----------------------------
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
