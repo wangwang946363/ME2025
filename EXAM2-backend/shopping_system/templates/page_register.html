@@ -1,29 +1,37 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>註冊系統</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>註冊系統</title>
+    <link rel="stylesheet" href="../static/styles.css">
+  </head>
 
-        <script src="../static/script.js"></script> <!--請改變路徑-->
-    </head>
+  <body>
+    <h2>註冊帳號</h2>
 
-    <body>
-        <h2>註冊帳號</h2>                                
-            <form action="/register" method="POST"> <!--請補齊內容-->
-                    <label for="username">帳號:</label>
-                    <input type="text" id="username" name="username" required>
-                    <br>
-                    <label for="password">密碼:</label>
-                    <input type="password" id="password" name="password" required>
-                    <br>
-                    <label for="Email">信箱:</label>
-                    <input type="email" id="email" name="email" required>
-                    <br>
-                    <br>
-                    <button type="submit">註冊</button>
-                </div>
-            </form>
-        </div>
-    </body>
+    <!-- ✅ 表單結構修正、路徑正確 -->
+    <form action="/page_register" method="POST">
+      <label for="username">帳號:</label>
+      <input type="text" id="username" name="username" required>
+      <br>
+
+      <label for="password">密碼:</label>
+      <input type="password" id="password" name="password" required>
+      <br>
+
+      <label for="email">信箱:</label>
+      <input type="email" id="email" name="email" required>
+      <br><br>
+
+      <button type="submit">註冊</button>
+    </form>
+
+    <div>
+      <p>已經有帳號？<a href="/page_login">登入</a></p>
+    </div>
+
+    <!-- ✅ script 放在頁尾 -->
+    <script src="../static/script.js"></script>
+  </body>
 </html>
